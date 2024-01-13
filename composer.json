@@ -1,0 +1,44 @@
+{
+    "name": "front-interop/front-interop",
+    "description": "Interoperable FrontController interfaces for PHP.",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Paul M. Jones",
+            "email": "pmjones@pmjones.io"
+        }
+    ],
+    "autoload": {
+        "psr-4": {
+            "FrontInterop\\": "./src"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "FrontInterop\\": "./tests"
+        }
+    },
+    "require-dev": {
+        "ext-xdebug": "*",
+        "nikic/fast-route": "^1.0",
+        "nyholm/psr7": "^1.0",
+        "pds/composer-script-names": "^1.0",
+        "pds/skeleton": "^1.0",
+        "phpunit/phpunit": "^10.0",
+        "pmjones/caplet": "^1.0",
+        "sapien/sapien": "^1.0",
+        "symfony/http-foundation": "^6.0",
+        "phpstan/phpstan": "^1.10",
+        "pmjones/php-styler": "^0.14.0",
+        "nyholm/psr7-server": "^1.1"
+    },
+    "scripts": {
+        "analyze": "./vendor/bin/phpstan analyze -c phpstan.neon",
+        "check": "composer test && composer analyze && composer cs-check",
+        "cs-check": "./vendor/bin/php-styler check",
+        "cs-fix": "./vendor/bin/php-styler apply",
+        "test": "./vendor/bin/phpunit",
+        "test-coverage": "./vendor/bin/phpunit --coverage-html=./tmp/coverage"
+    }
+}
