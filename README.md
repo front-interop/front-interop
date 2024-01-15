@@ -99,6 +99,21 @@ $responseHandler->handleResponse();
 
 The _RequestHandler_ and _ResponseHandler_ can now use any request and response objects they like via dependency injection, along with any router, middleware, or other libraries they need to pass a request to a controller or action and get back a response.
 
+A condensed variation of the bootstrap might look like this:
+
+```php
+use FrontInterop\RequestHandler;
+use Psr\Container\ContainerInterface;
+
+/** @var ContainerInterface */
+$container = require '/path/to/container.php';
+$container->get(RequestHandler::class)
+    ->handleRequest()
+    ->handleResponse();
+```
+
+Aside from non-container setup, that would be the entire outer boundary code at `public/index.php`.
+
 ## _RequestHandler_ Implementation
 
 This [ExampleRequestHandler.php](./tests/Example/ExampleRequestHandler.php) implementation uses [FastRoute](https://github.com/nikic/FastRoute) and callable route handlers to process a Sapien request.
