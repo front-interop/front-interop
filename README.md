@@ -86,8 +86,10 @@ use FrontInterop\RequestHandler;
 use FrontInterop\ResponseHandler;
 use Psr\Container\ContainerInterface;
 
+require dirname(__DIR__) . '/vendor/autoload.php';
+
 /** @var ContainerInterface */
-$container = require '/path/to/container.php';
+$container = require dirname(__DIR__) . '/config/container.php';
 
 /** @var RequestHandler */
 $requestHandler = $container->get(RequestHandler::class);
@@ -105,9 +107,13 @@ A condensed variation of the bootstrap might look like this:
 use FrontInterop\RequestHandler;
 use Psr\Container\ContainerInterface;
 
+require dirname(__DIR__) . '/vendor/autoload.php';
+
 /** @var ContainerInterface */
-$container = require '/path/to/container.php';
-$container->get(RequestHandler::class)
+$container = require dirname(__DIR__) . '/config/container.php';
+
+$container
+    ->get(RequestHandler::class)
     ->handleRequest()
     ->handleResponse();
 ```
