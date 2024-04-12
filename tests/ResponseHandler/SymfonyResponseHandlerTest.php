@@ -4,7 +4,7 @@ declare(strict_types=1);
 namespace FrontInterop\ResponseHandler;
 
 use FrontInterop\AssertionMethods;
-use Symfony\Component\HttpFoundation\Request;
+use FrontInterop\Example;
 use Symfony\Component\HttpFoundation\Response;
 
 class SymfonyResponseHandlerTest extends \PHPUnit\Framework\TestCase
@@ -13,17 +13,16 @@ class SymfonyResponseHandlerTest extends \PHPUnit\Framework\TestCase
 
     public function test() : void
     {
-        $request = Request::createFromGlobals();
         $response = new Response(
             'Hello World!',
             Response::HTTP_OK,
             ['content-type' => 'text/html'],
         );
         $this->assertResponse(
-            new SymfonyResponseHandler($response, $request),
+            new Example\ExampleSymfonyResponseHandler($response),
             200,
             [
-                'Content-Type: text/html; charset=UTF-8',
+                'Content-type: text/html;charset=UTF-8',
                 'Cache-Control: no-cache, private',
             ],
             'Hello World!',
