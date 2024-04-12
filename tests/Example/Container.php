@@ -23,7 +23,7 @@ class Container extends Caplet
 
         $this->factory(
             RequestHandler::class,
-            static fn (Caplet $caplet) => $caplet->get(ExampleRequestHandler::class),
+            static fn (Caplet $caplet) => $caplet->get(TargeterRequestHandler::class),
         );
 
         $this->factory(

@@ -1,14 +1,22 @@
 # `front-interop`
 
-The `front-interop` project defines a set of interoperable interfaces for the [FrontController pattern](https://martinfowler.com/eaaCatalog/frontController.html) in PHP. These interfaces define the request-receiving and response-sending behaviors at the outermost boundary of your HTTP presentation layer:
+The `front-interop` project defines a set of interoperable interfaces for the [FrontController pattern](https://martinfowler.com/eaaCatalog/frontController.html) in PHP.
 
-- `RequestHandler::handleRequest() : ResponseHandler` encapsulates the logic to transform an incoming HTTP request to an outgoing HTTP response. This encapsulated logic is entirely undefined by `front-interop`, and may use a router, middleware, Model-View-Controller presentation, Action-Domain-Responder presentation, or any other combination of components and collaborations.
+The following two interfaces define the request-receiving and response-sending behaviors at the outer boundary of your HTTP presentation layer:
+
+- `RequestHandler::handleRequest() : ResponseHandler` encapsulates the logic to receive an incoming HTTP request and return the logic to send or emit an HTTP response.
 
 - `ResponseHandler::handleResponse() : void` encapsulates the logic to send or emit an outgoing response.
 
+Further, this interface the process for determining which logic will fulfill the request and return a response:
+
+- `RequestTargeter::getRequestTarget() : RequestTarget` encapsulates the logic to determine which controller, action, middleware stack, or other element will process the request.
+
+The encapsulated request-processing logic is entirely undefined by `front-interop`, and may use a router, middleware, Model-View-Controller presentation, Action-Domain-Responder presentation, or any other combination of components and collaborations.
+
 ## Background
 
-The outer boundary of presentation logic in PHP frameworks tend to follow the same order of events: they do some setup work, then create and invoke logic to process a request, and finally they send the resulting response.
+The outer boundary of presentation logic in PHP frameworks tends to follow the same order of events: do some setup work, then create and invoke logic to process a request, and finally they send the resulting response.
 
 The relevant Laravel [`public/index.php`](https://github.com/laravel/laravel/blob/10.x/public/index.php) code:
 
@@ -63,13 +71,11 @@ These systems are all very different internally, but their outer boundary logic 
 
 ## Problem, Part 1: Request and Response
 
-> the OUTER BOUNDARY of the front controller
-
-Each of the above examples uses different request/response libraries. Laravel and Symfony use the Symfony HttpFoundation library, whereas Slim and the no-framework use the PSR-7 interfaces. Likewise, any other framework may use some other library.
+Each of the above examples uses different request/response libraries. Laravel and Symfony use the Symfony HttpFoundation library, whereas Slim and the no-framework use the PSR-7 interfaces. Likewise, other frameworks may use some other library.
 
 This raises a problem for interoperability, because the request and response objects are passed into and out of the front controller logic directly as method arguments and return values. No typehint can cover all the different possibilities, thus preventing interoperability between the different front controller implementations.
 
-### Solution: RequestHandler and ResponseHandler
+### Solution: _RequestHandler_ and _ResponseHandler_
 
 The interoperability solution to this problem is twofold:
 
@@ -124,51 +130,63 @@ Aside from non-container setup, that would be the entire outer boundary code at 
 
 ### _RequestHandler_ Implementation
 
-This [ExampleRequestHandler.php](./tests/Example/ExampleRequestHandler.php) implementation uses [FastRoute](https://github.com/nikic/FastRoute) and callable route handlers to process a Sapien request.
+This [FastRouteRequestHandler.php](./tests/Example/FastRouteRequestHandler.php) implementation uses [FastRoute](https://github.com/nikic/FastRoute) and callable action objects to process a Sapien request.
 
-Note that the implementation does not return a Sapien response object directly; instead, it returns that response composed into a _ResponseHandler_ implementation.
+Note that the implementation does not return a Sapien response object directly; instead, it returns that response composed into an _ExampleSapienResponseHandler_ implementation.
 
-The _RequestHandler_ implementation could be completely replaced by one that uses any combination of router, middleware dispatcher, controller or action invocation, and request/response objects, without changing any of the bootstrap logic above.
+The _RequestHandler_ implementation could be completely replaced by one that uses any combination of router, middleware dispatcher, controller or action invocation, and request/response objects, without changing any of the `public/index.php` bootstrap logic.
 
 ### _ResponseHandler_ Implementation
 
 Likewise, the _ResponseHandler_ can encapsulate any response object and implement the appropriate response-sending logic. The `front-interop` project provides _ResponseHandler_ implementations for these response objects ...
 
-- [PSR-7](./src/ResponseHandler/PsrResponseHandler.php)
-- [Sapien](./src/ResponseHandler/SapienResponseHandler.php)
-- [Symfony](./src/ResponseHandler/SymfonyResponseHandler.php)
+- [PSR-7](./tests/Example/ExamplePsrResponseHandler.php)
+- [Sapien](./tests/Example/ExampleSapienResponseHandler.php)
+- [Symfony](./tests/Example/ExampleSymfonyResponseHandler.php)
 
-... though of course consumers can write any replacement implementation they choose.
+... though of course consumers can write any implementation they desire.
 
 The _ResponseHandler_ implementation could be completely replaced without changing any of the bootstrap logic above.
 
 ## Problem, Part 2: Routing and Middleware
 
-> the INNER BOUNDARY of the front controller
-
-The RequestHandler must direct the incoming request to some target logic that will fulfill that request and return a response. Typically this is achieved via ...
+The _RequestHandler_ must direct the incoming request to some target logic that will fulfill the request and return a response. Typically this is achieved via ...
 
 - a router subsystem that picks a controller method or action class to build a response; or,
 - a middleware subsystem that processes the request on the way in and returns a response on the way out.
 
 The problem is that these subsystems are not themselves compatible. For example, different routers define routes in different ways, and adhere to no common specification. Likewise, different middleware subsystems may use different middleware signatures.
 
+The _RequestHandler_ itself might manage the routing or middleware subsystem directly, as in the above example. However, by delegating the concern of subsystem management to a separate element, different subsystem implementations may be swapped out, leaving the rest of the _RequestHandler_ logic unchanged.
+
 ### Solution
 
-The solution is to care *not* about the routing or middleware subsystems per se, but *instead* about **what is to be invoked as a result** of the routing or middleware subsystem operations. That is, to care about the *target* for request processing, as chosen by that subsytem. This RequestTarget is composed of:
+The solution is to care *not* about the routing or middleware subsystems per se, but *instead* about **what is to be invoked as a result** of the subsystem operations. That is, to care about the *target* for request processing chosen by that subsytem. This _RequestTarget_ is composed of:
 
-- a callable, such as a controller object method, and invokable action object, or a middleware stack; and,
+- a callable, such as a controller object method, an invokable action object, or a middleware stack; and,
 - the arguments to pass to that callable, typically derived from the incoming request.
 
-A RequestTargeter manages the routing or middleware subsystem, then builds and returns a RequestTarget as a result. The targeter may just return a middleware stack as the RequestTarget, or it may use a routing system internally to determine the route, then uses the route to build a RequestTarget, which is returned to the RequestHandler.
+The _RequestTargeter_ may use a routing system internally to determine the route, then use the route information to build and return a _RequestTarget_. Alternatively, the targeter may just return a middleware stack as the _RequestTarget_.
 
-The RequestHandler then invokes the RequestTarget callable and arguments to get back a response, and then wraps that response in an appropriate ResponseHandler.
+The _RequestHandler_ then invokes the _RequestTarget_ callable and arguments to get back a response, and wraps that response in an appropriate _ResponseHandler_.
 
-Note that the RequestTargeter and RequestTarget are not strictly necessary. The RequestHandler itself might manage the routing or middleware subsystem directly. The point here is that by delegating the subsystem management to a RequestTargeter, different targeter implementations may be swapped out, leaving the RequestHandler logic unchanged.
+### _RequestTargeter_ Implementation
 
+This [ExampleRequestTargeter.php](./tests/Example/ExampleRequestTargeter.php) extracts the routing and object creation logic from the [FastRouteRequestHandler.php](./tests/Example/FastRouteRequestHandler.php).
 
+As a result, this revised [TargeterRequestHandler.php](./tests/Example/TargeterRequestHandler.php) can use any targeter subsystem, allowing a complete replacement of the router implementation with any other implementation, or even with any middleware implementation.
 
+This means the _RequestHandler_ no longer needs to know how to *choose* the logic to fulfill the request; it only knows how to *invoke* that logic to get back a response.
 
+## Components and Collaborations
+
+- `index.php` calls _RequestHandler_
+    - _RequestHandler_ calls _RequestTargeter_
+        - _RequestTargeter_ returns a _RequestTarget_
+    - _RequestHandler_ invokes the identified _RequestTarget_ logic
+        - That logic returns a response
+    - _RequestHandler_ returns a _ResponseHandler_ with that response
+- `index.php` invokes _ResponseHandler_ to send the response
 
 
 ## Prior Art

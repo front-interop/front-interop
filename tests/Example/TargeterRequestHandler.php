@@ -7,7 +7,7 @@ use FrontInterop\RequestHandler;
 use FrontInterop\RequestTargeter;
 use FrontInterop\ResponseHandler;
 
-class ExampleRequestHandler implements RequestHandler
+class TargeterRequestHandler implements RequestHandler
 {
     public function __construct(
         protected RequestTargeter $requestTargeter,
