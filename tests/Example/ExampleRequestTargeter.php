@@ -28,12 +28,12 @@ class ExampleRequestTargeter implements RequestTargeter
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
-                $callable = [$this->container->get(Error\RouteNotFound::class), '__invoke'];
+                $callable = $this->container->get(Error\RouteNotFound::class);
                 $arguments = [];
                 break;
 
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $callable = [$this->container->get(Error\MethodNotAllowed::class), '__invoke'];
+                $callable = $this->container->get(Error\MethodNotAllowed::class);
                 $arguments = [$routeInfo[1]];
                 break;
 

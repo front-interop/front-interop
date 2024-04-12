@@ -61,13 +61,15 @@ return $emitter->emit($response);
 
 These systems are all very different internally, but their outer boundary logic is remarkably similar, as is that logic in many other systems.
 
-## Problem
+## Problem, Part 1: Request and Response
+
+> the OUTER BOUNDARY of the front controller
 
 Each of the above examples uses different request/response libraries. Laravel and Symfony use the Symfony HttpFoundation library, whereas Slim and the no-framework use the PSR-7 interfaces. Likewise, any other framework may use some other library.
 
 This raises a problem for interoperability, because the request and response objects are passed into and out of the front controller logic directly as method arguments and return values. No typehint can cover all the different possibilities, thus preventing interoperability between the different front controller implementations.
 
-## Solution
+### Solution: RequestHandler and ResponseHandler
 
 The interoperability solution to this problem is twofold:
 
@@ -77,7 +79,7 @@ The interoperability solution to this problem is twofold:
 
 These two very minor changes allow for a pair of interfaces that are interoperable across a wide range of systems. These interfaces are completely independent of any particular request/response library; that is, they will work with PSR-7, Symfony HttpFoundation, Sapien, or any other request/response library.
 
-## Example
+### Example
 
 Using the above interfaces, the outer boundary logic at a `public/index.php` bootstrap might look like this:
 
@@ -120,7 +122,7 @@ $container
 
 Aside from non-container setup, that would be the entire outer boundary code at `public/index.php`.
 
-## _RequestHandler_ Implementation
+### _RequestHandler_ Implementation
 
 This [ExampleRequestHandler.php](./tests/Example/ExampleRequestHandler.php) implementation uses [FastRoute](https://github.com/nikic/FastRoute) and callable route handlers to process a Sapien request.
 
@@ -128,7 +130,7 @@ Note that the implementation does not return a Sapien response object directly; 
 
 The _RequestHandler_ implementation could be completely replaced by one that uses any combination of router, middleware dispatcher, controller or action invocation, and request/response objects, without changing any of the bootstrap logic above.
 
-## _ResponseHandler_ Implementation
+### _ResponseHandler_ Implementation
 
 Likewise, the _ResponseHandler_ can encapsulate any response object and implement the appropriate response-sending logic. The `front-interop` project provides _ResponseHandler_ implementations for these response objects ...
 
@@ -139,6 +141,35 @@ Likewise, the _ResponseHandler_ can encapsulate any response object and implemen
 ... though of course consumers can write any replacement implementation they choose.
 
 The _ResponseHandler_ implementation could be completely replaced without changing any of the bootstrap logic above.
+
+## Problem, Part 2: Routing and Middleware
+
+> the INNER BOUNDARY of the front controller
+
+The RequestHandler must direct the incoming request to some target logic that will fulfill that request and return a response. Typically this is achieved via ...
+
+- a router subsystem that picks a controller method or action class to build a response; or,
+- a middleware subsystem that processes the request on the way in and returns a response on the way out.
+
+The problem is that these subsystems are not themselves compatible. For example, different routers define routes in different ways, and adhere to no common specification. Likewise, different middleware subsystems may use different middleware signatures.
+
+### Solution
+
+The solution is to care *not* about the routing or middleware subsystems per se, but *instead* about **what is to be invoked as a result** of the routing or middleware subsystem operations. That is, to care about the *target* for request processing, as chosen by that subsytem. This RequestTarget is composed of:
+
+- a callable, such as a controller object method, and invokable action object, or a middleware stack; and,
+- the arguments to pass to that callable, typically derived from the incoming request.
+
+A RequestTargeter manages the routing or middleware subsystem, then builds and returns a RequestTarget as a result. The targeter may just return a middleware stack as the RequestTarget, or it may use a routing system internally to determine the route, then uses the route to build a RequestTarget, which is returned to the RequestHandler.
+
+The RequestHandler then invokes the RequestTarget callable and arguments to get back a response, and then wraps that response in an appropriate ResponseHandler.
+
+Note that the RequestTargeter and RequestTarget are not strictly necessary. The RequestHandler itself might manage the routing or middleware subsystem directly. The point here is that by delegating the subsystem management to a RequestTargeter, different targeter implementations may be swapped out, leaving the RequestHandler logic unchanged.
+
+
+
+
+
 
 ## Prior Art
 
