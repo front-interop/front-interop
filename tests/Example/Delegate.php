@@ -3,9 +3,9 @@ declare(strict_types=1);
 
 namespace FrontInterop\Example;
 
-use FrontInterop\RequestTarget;
+use FrontInterop\DelegateInterface;
 
-class ExampleRequestTarget implements RequestTarget
+class Delegate implements DelegateInterface
 {
     /**
      * @param callable $callable

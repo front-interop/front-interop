@@ -5,7 +5,7 @@ namespace FrontInterop\Example\Action;
 
 use Sapien\Response\JsonResponse;
 
-class GetUser
+class GetUserAction
 {
     public function __invoke(string $id) : JsonResponse
     {

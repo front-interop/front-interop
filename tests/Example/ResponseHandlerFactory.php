@@ -3,28 +3,28 @@ declare(strict_types=1);
 
 namespace FrontInterop\Example;
 
-use FrontInterop\ResponseHandler;
+use FrontInterop\ResponseHandlerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponse;
 use Sapien\Response as SapienResponse;
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-class ExampleResponseHandlerFactory
+class ResponseHandlerFactory
 {
-    public function newResponseHandler(mixed $response) : ResponseHandler
+    public function newResponseHandler(mixed $response) : ResponseHandlerInterface
     {
         switch (true) {
             case $response instanceof PsrResponse:
-                return new ExamplePsrResponseHandler($response);
+                return new PsrResponseHandler($response);
 
             case $response instanceof SapienResponse:
-                return new ExampleSapienResponseHandler($response);
+                return new SapienResponseHandler($response);
 
             case $response instanceof SymfonyResponse:
-                return new ExampleSymfonyResponseHandler($response);
+                return new SymfonyResponseHandler($response);
 
             default:
                 $type = get_class($type);
-                throw new ExampleResponseHandlerException("Unknown response type: {$type}");
+                throw new ResponseHandlerException("Unknown response type: {$type}");
         };
     }
 }

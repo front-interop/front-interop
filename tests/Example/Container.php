@@ -5,9 +5,8 @@ namespace FrontInterop\Example;
 
 use Caplet\Caplet;
 use FastRoute;
-use FrontInterop\RequestHandler;
-use FrontInterop\RequestTargeter;
-use FrontInterop\ResponseHandler;
+use FrontInterop\RequestHandlerInterface;
+use FrontInterop\DelegatorInterface;
 use Psr\Container\ContainerInterface;
 
 class Container extends Caplet
@@ -22,13 +21,13 @@ class Container extends Caplet
         );
 
         $this->factory(
-            RequestHandler::class,
-            static fn (Caplet $caplet) => $caplet->get(TargeterRequestHandler::class),
+            RequestHandlerInterface::class,
+            static fn (Caplet $caplet) => $caplet->get(RequestHandler::class),
         );
 
         $this->factory(
-            RequestTargeter::class,
-            static fn (Caplet $caplet) => $caplet->get(ExampleRequestTargeter::class),
+            DelegatorInterface::class,
+            static fn (Caplet $caplet) => $caplet->get(Delegator::class),
         );
 
         $this->factory(
@@ -37,7 +36,7 @@ class Container extends Caplet
                 => FastRoute\simpleDispatcher(
                     static function (FastRoute\RouteCollector $r
                 ) {
-                    $r->addRoute('GET', '/user/{id:\d+}', Action\GetUser::class);
+                    $r->addRoute('GET', '/user/{id:\d+}', Action\GetUserAction::class);
                 }
             ),
         );

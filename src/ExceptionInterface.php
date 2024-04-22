@@ -5,6 +5,6 @@ namespace FrontInterop;
 
 use Throwable;
 
-interface FrontException extends Throwable
+interface ExceptionInterface extends Throwable
 {
 }

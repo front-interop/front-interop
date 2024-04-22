@@ -9,7 +9,7 @@ trait AssertionMethods
      * @param string[] $headers
      */
     protected function assertResponse(
-        ResponseHandler $responseHandler,
+        ResponseHandlerInterface $responseHandler,
         int $code,
         array $headers,
         string $content,
@@ -18,6 +18,7 @@ trait AssertionMethods
         ob_start();
         $responseHandler->handleResponse();
         $actualContent = ob_get_clean();
+        var_dump($actualContent);
         $actualCode = http_response_code();
         $actualHeaders = xdebug_get_headers();
 

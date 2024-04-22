@@ -17,7 +17,7 @@ class FrontInteropTest extends \PHPUnit\Framework\TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/user/123';
         $this->assertResponse(
-            $this->handle(),
+            $this->handleRequest(),
             200,
             ['content-type: application/json'],
             '{"user":{"id":"123"}}',
@@ -29,7 +29,7 @@ class FrontInteropTest extends \PHPUnit\Framework\TestCase
         $_SERVER['REQUEST_METHOD'] = 'GET';
         $_SERVER['REQUEST_URI'] = '/users';
         $this->assertResponse(
-            $this->handle(),
+            $this->handleRequest(),
             404,
             ['content-type: application/json'],
             '{"errors":[{"status":"404","title":"Not Found."}]}',
@@ -41,17 +41,17 @@ class FrontInteropTest extends \PHPUnit\Framework\TestCase
         $_SERVER['REQUEST_METHOD'] = 'PATCH';
         $_SERVER['REQUEST_URI'] = '/user/123';
         $this->assertResponse(
-            $this->handle(),
+            $this->handleRequest(),
             405,
             ['allow: GET', 'content-type: application/json'],
             '{"errors":{"status":405,"title":"Method not allowed.","detail":"Allow: GET"}}',
         );
     }
 
-    protected function handle() : ResponseHandler
+    protected function handleRequest() : ResponseHandlerInterface
     {
         $container = new Example\Container();
-        $requestHandler = $container->get(RequestHandler::class);
+        $requestHandler = $container->get(RequestHandlerInterface::class);
         return $requestHandler->handleRequest();
     }
 }

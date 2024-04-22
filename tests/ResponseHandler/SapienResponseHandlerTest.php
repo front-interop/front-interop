@@ -18,7 +18,7 @@ class SapienResponseHandlerTest extends \PHPUnit\Framework\TestCase
         $response->setHeader('content-type', 'text/html');
         $response->setContent('Hello World!');
         $this->assertResponse(
-            new Example\ExampleSapienResponseHandler($response),
+            new Example\SapienResponseHandler($response),
             200,
             ['Content-type: text/html;charset=UTF-8'],
             'Hello World!',

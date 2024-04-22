@@ -5,13 +5,13 @@ namespace FrontInterop\Example;
 
 use FastRoute\Dispatcher;
 use FrontInterop\Example\Error;
-use FrontInterop\Example\ExampleSapienResponseHandler;
-use FrontInterop\RequestHandler;
-use FrontInterop\ResponseHandler;
+use FrontInterop\DelegateInterface;
+use FrontInterop\DelegatorInterface;
 use Psr\Container\ContainerInterface;
 use Sapien\Request;
+use Throwable;
 
-class FastRouteRequestHandler implements RequestHandler
+class Delegator implements DelegatorInterface
 {
     public function __construct(
         protected Request $request,
@@ -20,7 +20,7 @@ class FastRouteRequestHandler implements RequestHandler
     ) {
     }
 
-    public function handleRequest() : ResponseHandler
+    public function delegateRequest() : DelegateInterface
     {
         $routeInfo = $this->dispatcher->dispatch(
             $this->request->method->name,
@@ -29,12 +29,12 @@ class FastRouteRequestHandler implements RequestHandler
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:
-                $callable = $this->container->get(Error\RouteNotFound::class);
+                $callable = $this->container->get(Error\RouteNotFoundError::class);
                 $arguments = [];
                 break;
 
             case Dispatcher::METHOD_NOT_ALLOWED:
-                $callable = $this->container->get(Error\MethodNotAllowed::class);
+                $callable = $this->container->get(Error\MethodNotAllowedError::class);
                 $arguments = [$routeInfo[1]];
                 break;
 
@@ -44,7 +44,14 @@ class FastRouteRequestHandler implements RequestHandler
                 break;
         }
 
-        $response = $callable(...$arguments);
-        new ExampleSapienResponseHandler($response);
+        return new Delegate($callable, $arguments);
+    }
+
+    public function delegateThrowable(Throwable $e) : DelegateInterface
+    {
+        return new Delegate(
+            callable: $this->container->get(Error\ServerError::class),
+            arguments: [$e],
+        );
     }
 }

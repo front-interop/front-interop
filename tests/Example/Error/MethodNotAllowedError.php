@@ -5,7 +5,7 @@ namespace FrontInterop\Example\Error;
 
 use Sapien\Response\JsonResponse;
 
-class MethodNotAllowed
+class MethodNotAllowedError
 {
     /**
      * @param string[] $allow

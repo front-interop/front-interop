@@ -3,10 +3,10 @@ declare(strict_types=1);
 
 namespace FrontInterop\Example;
 
-use FrontInterop\ResponseHandler;
+use FrontInterop\ResponseHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
 
-class ExamplePsrResponseHandler implements ResponseHandler
+class PsrResponseHandler implements ResponseHandlerInterface
 {
     public function __construct(protected ResponseInterface $response)
     {

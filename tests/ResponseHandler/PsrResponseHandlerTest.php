@@ -20,7 +20,7 @@ class PsrResponseHandlerTest extends \PHPUnit\Framework\TestCase
             ->withHeader('content-type', 'text/html')
             ->withBody($responseBody);
         $this->assertResponse(
-            new Example\ExamplePsrResponseHandler($response),
+            new Example\PsrResponseHandler($response),
             200,
             ['Content-type: text/html;charset=UTF-8'],
             'Hello World!',

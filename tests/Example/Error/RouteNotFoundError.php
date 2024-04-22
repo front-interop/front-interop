@@ -5,7 +5,7 @@ namespace FrontInterop\Example\Error;
 
 use Sapien\Response\JsonResponse;
 
-class RouteNotFound
+class RouteNotFoundError
 {
     public function __invoke() : JsonResponse
     {

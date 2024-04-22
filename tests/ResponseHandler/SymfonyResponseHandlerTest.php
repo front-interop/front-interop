@@ -19,7 +19,7 @@ class SymfonyResponseHandlerTest extends \PHPUnit\Framework\TestCase
             ['content-type' => 'text/html'],
         );
         $this->assertResponse(
-            new Example\ExampleSymfonyResponseHandler($response),
+            new Example\SymfonyResponseHandler($response),
             200,
             [
                 'Content-type: text/html;charset=UTF-8',
