@@ -10,7 +10,7 @@ use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 class ResponseHandlerFactory
 {
-    public function newResponseHandler(mixed $response) : ResponseHandlerInterface
+    public function newResponseHandler(object $response) : ResponseHandlerInterface
     {
         switch (true) {
             case $response instanceof PsrResponse:

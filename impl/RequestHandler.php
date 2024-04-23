@@ -31,7 +31,7 @@ class RequestHandler implements RequestHandlerInterface
         return $this->responseHandlerFactory->newResponseHandler($response);
     }
 
-    protected function getResponse(DelegateInterface $delegate) : mixed
+    protected function getResponse(DelegateInterface $delegate) : object
     {
         $callable = $delegate->getCallable();
         $arguments = $delegate->getArguments();
