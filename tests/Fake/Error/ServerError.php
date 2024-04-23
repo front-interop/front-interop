@@ -17,7 +17,7 @@ class ServerError
                 'status' => 500,
                 'title' => get_class($e),
                 'detail' => $e->getMessage(),
-            ]
+            ],
         ]);
         return $response;
     }

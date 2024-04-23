@@ -16,31 +16,26 @@ class Container extends Caplet
     public function __construct(array $config = [])
     {
         parent::__construct($config);
-
         $this->factory(
             ContainerInterface::class,
-            static fn (Caplet $caplet) => $caplet,
+            fn (Caplet $caplet) => $caplet,
         );
-
         $this->factory(
             RequestHandlerInterface::class,
-            static fn (Caplet $caplet) => $caplet->get(RequestHandler::class),
+            fn (Caplet $caplet) => $caplet->get(RequestHandler::class),
         );
-
         $this->factory(
             DelegatorInterface::class,
-            static fn (Caplet $caplet) => $caplet->get(Delegator::class),
+            fn (Caplet $caplet) => $caplet->get(Delegator::class),
         );
-
         $this->factory(
             FastRoute\Dispatcher::class,
-            static fn (Caplet $caplet)
-                => FastRoute\simpleDispatcher(
-                    static function (FastRoute\RouteCollector $r
-                ) {
+            function (Caplet $caplet) {
+                $routes = function (FastRoute\RouteCollector $r) {
                     $r->addRoute('GET', '/user/{id:\d+}', Action\GetUserAction::class);
-                }
-            ),
+                };
+                return FastRoute\simpleDispatcher($routes);
+            },
         );
     }
 }

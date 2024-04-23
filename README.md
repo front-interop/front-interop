@@ -141,7 +141,7 @@ Aside from non-container setup, that would be the entire outer boundary code at 
 
 ### _RequestHandlerInterface_ Implementation
 
-This [RequestHandlerV0.php](./tests/Example/RequestHandlerV0.php) implementation uses [FastRoute](https://github.com/nikic/FastRoute) and callable action objects to process a Sapien request.
+This [example RequestHandler.php](./example/RequestHandler.php) implementation uses [FastRoute](https://github.com/nikic/FastRoute) and callable action objects to process a Sapien request.
 
 Note that the implementation does not return a Sapien response object directly; instead, it returns that response composed into an _SapienResponseHandler_ implementation.
 
@@ -151,9 +151,9 @@ The _RequestHandlerInterface_ implementation could be completely replaced by one
 
 Likewise, the _ResponseHandlerInterface_ can encapsulate any response object and implement the appropriate response-sending logic. The `front-interop` project provides _ResponseHandlerInterface_ implementations for these response objects ...
 
-- [PSR-7](./tests/Example/PsrResponseHandler.php)
-- [Sapien](./tests/Example/SapienResponseHandler.php)
-- [Symfony](./tests/Example/SymfonyResponseHandler.php)
+- [PSR-7](./impl/PsrResponseHandler.php)
+- [Sapien](./impl/SapienResponseHandler.php)
+- [Symfony](./impl/SymfonyResponseHandler.php)
 
 ... though of course consumers can write any implementation they desire.
 
@@ -183,9 +183,9 @@ The _RequestHandlerInterface_ implementaton then invokes the _DelegateInterface_
 
 ### _DelegatorInterface_ Implementation
 
-This [Delegator.php](./tests/Example/Delegator.php) extracts the routing and object creation logic from the [RequestHandlerV0.php](./tests/Example/RequestHandlerV0.php).
+This [Delegator.php](./tests/Fake/Delegator.php) extracts the routing and object creation logic from the [example RequestHandler.php](./example/RequestHandler.php).
 
-As a result, this revised [RequestHandler.php](./tests/Example/RequestHandler.php) can use any delegation subsystem, allowing a complete replacement of the router implementation with any other implementation, or even with any middleware implementation.
+As a result, this revised [RequestHandler.php](./impl/RequestHandler.php) implementation can use any delegation subsystem, allowing a complete replacement of the router implementation with any other implementation, or even with any middleware implementation.
 
 This means the _RequestHandlerInterface_ no longer needs to know how to *choose* the logic to fulfill the request; it only needs to to *invoke* that logic to get back a response.
 

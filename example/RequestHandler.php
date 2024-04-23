@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Fake;
+namespace FrontInterop\Example;
 
 use FastRoute\Dispatcher;
 use FrontInterop\Fake\Error;
@@ -12,7 +12,7 @@ use Psr\Container\ContainerInterface;
 use Sapien\Request;
 use Throwable;
 
-class RequestHandlerV1 implements RequestHandlerInterface
+class RequestHandler implements RequestHandlerInterface
 {
     public function __construct(
         protected Request $request,

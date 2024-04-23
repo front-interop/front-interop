@@ -23,10 +23,11 @@ class Delegator implements DelegatorInterface
 
     public function delegateRequest() : DelegateInterface
     {
-        $routeInfo = $this->dispatcher->dispatch(
-            (string) $this->request->method->name,
-            (string) $this->request->url->path,
-        );
+        $routeInfo = $this->dispatcher
+            ->dispatch(
+                (string) $this->request->method->name,
+                (string) $this->request->url->path,
+            );
 
         switch ($routeInfo[0]) {
             case Dispatcher::NOT_FOUND:

@@ -24,7 +24,8 @@ class ResponseHandlerFactory
 
             default:
                 $type = get_class($type);
+
                 throw new FrontInteropException("Unknown response type: {$type}");
-        };
+        }
     }
 }
