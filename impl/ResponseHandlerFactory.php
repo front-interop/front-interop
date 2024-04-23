@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Example;
+namespace FrontInterop\Impl;
 
 use FrontInterop\ResponseHandlerInterface;
 use Psr\Http\Message\ResponseInterface as PsrResponse;
@@ -24,7 +24,7 @@ class ResponseHandlerFactory
 
             default:
                 $type = get_class($type);
-                throw new ResponseHandlerException("Unknown response type: {$type}");
+                throw new FrontInteropException("Unknown response type: {$type}");
         };
     }
 }

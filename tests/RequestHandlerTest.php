@@ -3,12 +3,12 @@ declare(strict_types=1);
 
 namespace FrontInterop;
 
-use FrontInterop\Example\Container;
+use FrontInterop\Fake\Container;
 
 /**
  * @backupGlobals enabled
  */
-class FrontInteropTest extends \PHPUnit\Framework\TestCase
+class RequestHandlerTest extends \PHPUnit\Framework\TestCase
 {
     use AssertionMethods;
 
@@ -50,7 +50,7 @@ class FrontInteropTest extends \PHPUnit\Framework\TestCase
 
     protected function handleRequest() : ResponseHandlerInterface
     {
-        $container = new Example\Container();
+        $container = new Fake\Container();
         $requestHandler = $container->get(RequestHandlerInterface::class);
         return $requestHandler->handleRequest();
     }

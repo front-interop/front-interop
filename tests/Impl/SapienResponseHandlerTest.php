@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\ResponseHandler;
+namespace FrontInterop\Impl;
 
 use FrontInterop\AssertionMethods;
-use FrontInterop\Example;
 use Sapien\Response;
 
 class SapienResponseHandlerTest extends \PHPUnit\Framework\TestCase
@@ -18,7 +17,7 @@ class SapienResponseHandlerTest extends \PHPUnit\Framework\TestCase
         $response->setHeader('content-type', 'text/html');
         $response->setContent('Hello World!');
         $this->assertResponse(
-            new Example\SapienResponseHandler($response),
+            new SapienResponseHandler($response),
             200,
             ['Content-type: text/html;charset=UTF-8'],
             'Hello World!',

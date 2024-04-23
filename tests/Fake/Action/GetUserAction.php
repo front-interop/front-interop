@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Example\Action;
+namespace FrontInterop\Fake\Action;
 
 use Sapien\Response\JsonResponse;
 

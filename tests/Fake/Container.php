@@ -1,12 +1,14 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Example;
+namespace FrontInterop\Fake;
 
 use Caplet\Caplet;
 use FastRoute;
-use FrontInterop\RequestHandlerInterface;
 use FrontInterop\DelegatorInterface;
+use FrontInterop\Fake\Delegator;
+use FrontInterop\Impl\RequestHandler;
+use FrontInterop\RequestHandlerInterface;
 use Psr\Container\ContainerInterface;
 
 class Container extends Caplet

@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Example;
+namespace FrontInterop\Impl;
 
 use FrontInterop\ResponseHandlerInterface;
 use Psr\Http\Message\ResponseInterface;

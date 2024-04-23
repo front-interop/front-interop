@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\ResponseHandler;
+namespace FrontInterop\Impl;
 
 use FrontInterop\AssertionMethods;
-use FrontInterop\Example;
 use Nyholm\Psr7\Factory\Psr17Factory;
 
 class PsrResponseHandlerTest extends \PHPUnit\Framework\TestCase
@@ -20,7 +19,7 @@ class PsrResponseHandlerTest extends \PHPUnit\Framework\TestCase
             ->withHeader('content-type', 'text/html')
             ->withBody($responseBody);
         $this->assertResponse(
-            new Example\PsrResponseHandler($response),
+            new PsrResponseHandler($response),
             200,
             ['Content-type: text/html;charset=UTF-8'],
             'Hello World!',

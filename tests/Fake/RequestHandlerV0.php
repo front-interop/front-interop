@@ -1,11 +1,11 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Example;
+namespace FrontInterop\Fake;
 
 use FastRoute\Dispatcher;
-use FrontInterop\Example\Error;
-use FrontInterop\Example\SapienResponseHandler;
+use FrontInterop\Fake\Error;
+use FrontInterop\Impl\SapienResponseHandler;
 use FrontInterop\RequestHandlerInterface;
 use FrontInterop\ResponseHandler;
 use Psr\Container\ContainerInterface;

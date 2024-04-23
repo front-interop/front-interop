@@ -1,12 +1,12 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Example;
+namespace FrontInterop\Impl;
 
 use FrontInterop\ResponseHandlerInterface;
-use Sapien\Response;
+use Symfony\Component\HttpFoundation\Response;
 
-class SapienResponseHandler implements ResponseHandlerInterface
+class SymfonyResponseHandler implements ResponseHandlerInterface
 {
     public function __construct(protected Response $response)
     {

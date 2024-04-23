@@ -1,7 +1,7 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\Example\Error;
+namespace FrontInterop\Fake\Error;
 
 use Sapien\Response\JsonResponse;
 use Throwable;

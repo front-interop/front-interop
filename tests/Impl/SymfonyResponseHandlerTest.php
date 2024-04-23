@@ -1,10 +1,9 @@
 <?php
 declare(strict_types=1);
 
-namespace FrontInterop\ResponseHandler;
+namespace FrontInterop\Impl;
 
 use FrontInterop\AssertionMethods;
-use FrontInterop\Example;
 use Symfony\Component\HttpFoundation\Response;
 
 class SymfonyResponseHandlerTest extends \PHPUnit\Framework\TestCase
@@ -19,7 +18,7 @@ class SymfonyResponseHandlerTest extends \PHPUnit\Framework\TestCase
             ['content-type' => 'text/html'],
         );
         $this->assertResponse(
-            new Example\SymfonyResponseHandler($response),
+            new SymfonyResponseHandler($response),
             200,
             [
                 'Content-type: text/html;charset=UTF-8',

@@ -18,7 +18,6 @@ trait AssertionMethods
         ob_start();
         $responseHandler->handleResponse();
         $actualContent = ob_get_clean();
-        var_dump($actualContent);
         $actualCode = http_response_code();
         $actualHeaders = xdebug_get_headers();
 
