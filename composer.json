@@ -1,5 +1,6 @@
 {
     "name": "front-interop/front-interop",
+    "abandoned": "front-interop/interface",
     "description": "Interoperable FrontController interfaces for PHP.",
     "type": "library",
     "license": "MIT",
